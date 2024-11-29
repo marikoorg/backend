@@ -1,0 +1,28 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  # Install dependencies
+  - name: python
+    entrypoint: pip
+    args: ["install", "-r", "requirements.txt", "--user"]
+
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 
+           'africa-south1-docker.pkg.dev/thermal-diorama-443207-k0/infra-task/backend:${SHORT_SHA}', '.']
+
+  # Docker push to Google Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push',  'africa-south1-docker.pkg.dev/thermal-diorama-443207-k0/infra-task/backend:${SHORT_SHA}']
+
+  # Deploy to Cloud Run
+  - name: google/cloud-sdk
+    args: ['gcloud', 'run', 'deploy', 'backend', 
+           '--image=africa-south1-docker.pkg.dev/thermal-diorama-443207-k0/infra-task/backend:${SHORT_SHA}', 
+           '--region', 'africa-south1', '--platform', 'managed', 
+           '--allow-unauthenticated']
+
+
+images:
+  - africa-south1-docker.pkg.dev/thermal-diorama-443207-k0/infra-task/backend:${SHORT_SHA}
