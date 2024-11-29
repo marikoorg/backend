@@ -1,11 +1,14 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from flask_cors import CORS
+
 import os
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
 # Configure the database connection using environment variables
 app.config['SQLALCHEMY_DATABASE_URI'] = (
