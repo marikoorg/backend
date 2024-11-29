@@ -1,14 +1,11 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-from flask_cors import CORS
-
 import os
 
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
 
 # Configure the database connection using environment variables
 app.config['SQLALCHEMY_DATABASE_URI'] = (
@@ -54,12 +51,13 @@ def msg_post_api(msg):
 def msg_get_api(msg_id):
     print(f"msg_get_api > msg_id = {msg_id}")
 
-    msg = Message.query.get(msg_id)
+    msgObj = Message.query.get(msg_id)
     
     # Check if message is not found
-    if not msg:
+    if msgObj==None:
         return jsonify({'error': 'Message not found'}), 404
-        
+    
+    msg = msgObj.message
     return jsonify({'msg': msg})
 
 
